@@ -9,7 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "prepare": "husky install",
+    "prepare": "husky",
     "release": "standard-version"
   },
   "dependencies": {
