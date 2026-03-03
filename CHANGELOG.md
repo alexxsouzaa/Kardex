@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/alexxsouzaa/Kardex/compare/v1.2.0...v1.3.0) (2026-03-03)
+
+
+### Features
+
+* adicionar componente CardBanner com imagem e textos ([5af4735](https://github.com/alexxsouzaa/Kardex/commit/5af47358eef8041797cdf793b63aa5d919895bf3))
+
 ## [1.2.0](https://github.com/alexxsouzaa/Kardex/compare/v1.1.0...v1.2.0) (2026-03-03)
 
 
