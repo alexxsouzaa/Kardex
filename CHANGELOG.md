@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/alexxsouzaa/Kardex/compare/v1.1.0...v1.2.0) (2026-03-03)
+
+
+### Features
+
+* adiciona componente IconButton ([df57ed5](https://github.com/alexxsouzaa/Kardex/commit/df57ed5a87118d7d3a1403dca1856a1347ba8b9f))
+* **ui:** cria componente Header com avatar e saudação ([73451d9](https://github.com/alexxsouzaa/Kardex/commit/73451d99e1fcbca03e15f9b1d43ee24714d33dec))
+
 ## 1.1.0 (2026-03-02)
 
 
