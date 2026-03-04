@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/alexxsouzaa/Kardex/compare/v1.4.0...v1.5.0) (2026-03-04)
+
+
+### Features
+
+* adicionar componente ModuleCard ([e6452eb](https://github.com/alexxsouzaa/Kardex/commit/e6452eb7a026d3381427559b9e7193a603f855d9))
+
 ## [1.4.0](https://github.com/alexxsouzaa/Kardex/compare/v1.3.0...v1.4.0) (2026-03-04)
 
 
