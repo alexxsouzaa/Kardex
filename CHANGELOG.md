@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/alexxsouzaa/Kardex/compare/v1.3.0...v1.4.0) (2026-03-04)
+
+
+### Features
+
+* adicionar componente TextButton ([99d9c17](https://github.com/alexxsouzaa/Kardex/commit/99d9c1766053606cdc7f55b187997b318a0484a3))
+
 ## [1.3.0](https://github.com/alexxsouzaa/Kardex/compare/v1.2.0...v1.3.0) (2026-03-03)
 
 
