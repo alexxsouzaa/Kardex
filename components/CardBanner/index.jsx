@@ -1,4 +1,5 @@
 import { Text, View, StyleSheet, ImageBackground } from "react-native";
+import TextButton from "../TextButton";
 
 export default function CardBanner() {
     return (
@@ -8,9 +9,12 @@ export default function CardBanner() {
             imageStyle={styles.image}
             resizeMode="cover"
         >
-            <View style={styles.textContainer}>
-                <Text style={styles.title}>Kardex</Text>
-                <Text style={styles.subtitle}>Seu estoque na palma da mão</Text>
+            <View style={styles.content}>
+                <View style={styles.textContainer}>
+                    <Text style={styles.title}>Kardex</Text>
+                    <Text style={styles.subtitle}>Seu estoque na palma da mão</Text>
+                </View>
+                <TextButton />
             </View>
         </ImageBackground>
     );
@@ -40,5 +44,13 @@ const styles = StyleSheet.create({
     },
     image: {
         borderRadius: 22,
+    },
+    content: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        width: '100%',
+        height: '100%',
+        padding: 8,
     },
 });

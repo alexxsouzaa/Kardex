@@ -1,5 +1,6 @@
 import { Text, View, StyleSheet, Image } from "react-native";
 import IconButton from "../IconButton";
+import { Notification } from "iconsax-react-native"
 
 export default function Header() {
     return (
@@ -12,7 +13,7 @@ export default function Header() {
             </View>
         </View>
         <View style={styles.notificationContainer}>
-            <IconButton />
+            <IconButton icon={Notification}/>
         </View>
         </View>
     );
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 16,
+        paddingVertical: 16,
         width: '100%',
     },
     userContainer: {
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
         gap: 0,
     },
     title: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '800',
         color: "#292D32"
     },
