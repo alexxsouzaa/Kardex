@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/alexxsouzaa/Kardex/compare/v1.5.0...v1.7.0) (2026-03-10)
+
+
+### Features
+
+* adicionar avatar do usuário ([acbc4f7](https://github.com/alexxsouzaa/Kardex/commit/acbc4f7d84c703c780853c77ffeb59b60b426a5b))
+* adicionar componente FilterTabs ([a16f12d](https://github.com/alexxsouzaa/Kardex/commit/a16f12d1a59ba5aac5a112c10f492ea7477aa99c))
+* adicionar componente IconButton ([b2353f3](https://github.com/alexxsouzaa/Kardex/commit/b2353f3b8b70f886f222ed4383c6ba4c4960bfb5))
+* adicionar configuração de fontes ([408b111](https://github.com/alexxsouzaa/Kardex/commit/408b111a3b576cfe25ecf2bee04486ba6c876b71))
+* adicionar imagem do card da tela inicial ([284d6dc](https://github.com/alexxsouzaa/Kardex/commit/284d6dc9f04ae0f59068f641e634ea06e76e6e76))
+* adicionar tela de cadastro ([a4689e8](https://github.com/alexxsouzaa/Kardex/commit/a4689e80d98c9d192dc1f6f1407c5ddd2505cb27))
+* adicionar tela de controle de estoque ([9ec78ba](https://github.com/alexxsouzaa/Kardex/commit/9ec78bad63c023ba69bef79ea572e830afd7751e))
+* adicionar tela de relatórios ([95864b3](https://github.com/alexxsouzaa/Kardex/commit/95864b30dd85b7f3e6c752cc4b93bd928fd0f0e4))
+
 ### [1.6.1](https://github.com/alexxsouzaa/Kardex/compare/v1.6.0...v1.6.1) (2026-03-10)
 
 ## [1.6.0](https://github.com/alexxsouzaa/Kardex/compare/v1.4.0...v1.6.0) (2026-03-10)
