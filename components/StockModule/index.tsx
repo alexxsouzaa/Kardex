@@ -1,16 +1,21 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
-import IconButton from "../IconButton";
-import { ArrowRight2 } from "iconsax-react-native";
+import { Colors } from "@/constants/colors";
+import { LOW_STOCK_THRESHOLD } from "@/constants/stockData";
+import { ArrowRight2, ShoppingCart } from "iconsax-react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 
 type StockItem = {
     id: string;
-    name: string;       // Nome do produto
-    eanCode: string;    // Código EAN / código de barras
-    quantity: number;   // Quantidade em estoque
-    value: number;      // Valor unitário
-    unit: string;       // Unidade de medida (ex: "Quilos", "Unidades")
+    name: string;
+    eanCode: string;
+    quantity: number;
+    value: number;
+    unit: string;
+    category?: string;
+    type?: string;
+    icon?: any;
+    images?: string[];
 };
 
 type StockModuleProps = {
@@ -18,11 +23,22 @@ type StockModuleProps = {
     onPress?: () => void;
 };
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function getStockStatus(quantity: number) {
+    if (quantity === 0)                  return { color: Colors.danger,  bg: Colors.dangerLight,  label: 'Em Falta'      };
+    if (quantity <= LOW_STOCK_THRESHOLD) return { color: Colors.warning, bg: Colors.warningLight, label: 'Estoque baixo' };
+    return                                      { color: null,           bg: null,                label: null            };
+}
+
 // ─── Componente ──────────────────────────────────────────────────────────────
 
 export default function StockModule({ data, onPress }: StockModuleProps) {
-    // Formata o valor para moeda BRL (ex: R$ 125,99)
-    const formattedValue = data.value.toLocaleString('pt-BR', {
+    const Icon = data.icon ?? ShoppingCart;
+    const firstImage = data.images?.[0];
+    const status = getStockStatus(data.quantity);
+
+    const totalValue = (data.value * data.quantity).toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL',
     });
@@ -31,36 +47,62 @@ export default function StockModule({ data, onPress }: StockModuleProps) {
         <Pressable
             style={({ pressed }) => [
                 styles.container,
-                pressed && styles.containerPressed, // feedback visual ao pressionar
+                pressed && styles.containerPressed,
             ]}
             onPress={onPress}
+            accessibilityRole="button"
+            accessibilityLabel={`${data.name}, ${totalValue}, ${data.quantity} ${data.unit}`}
+            accessibilityHint="Toque para ver detalhes do produto"
         >
-            {/* Imagem / ícone do produto */}
-            <View style={styles.imageContainer} />
+            <View style={styles.top}>
 
-            {/* Informações principais */}
-            <View style={styles.infoContainer}>
-                <View style={styles.infoTop}>
-                    <Text style={styles.title}numberOfLines={1}>{data.name}</Text>
-                    <Text style={styles.eanCode}>Item: {data.eanCode}</Text>
-                    <Text style={styles.value}>{formattedValue}</Text>
+                {/* Imagem */}
+                <View style={styles.imageContainer}>
+                    {firstImage ? (
+                        <Image
+                            source={{ uri: firstImage }}
+                            style={styles.image}
+                            resizeMode="cover"
+                        />
+                    ) : (
+                        <Icon size={28} color={Colors.textMuted} variant="Bold" />
+                    )}
                 </View>
 
-                {/* Quantidade + unidade de medida */}
-                <Text style={styles.quantity}>
-                    {data.quantity} {data.unit}
-                </Text>
-            </View>
+                {/* Info */}
+                <View style={styles.info}>
 
-            {/* Botão de navegação */}
-            <View style={styles.actionContainer}>
-                <IconButton
-                    icon={ArrowRight2}
-                    variant="Linear"
-                    backgroundColor="#fff"
-                    iconColor="#292D32"
-                    size={16}
-                />
+                    {/* Nome + badge de status inline */}
+                    <View style={styles.nameRow}>
+                        <Text style={styles.name} numberOfLines={1}>{data.name}</Text>
+                        {status.label && (
+                            <View style={[styles.statusBadge, { backgroundColor: status.bg! }]}>
+                                <Text style={[styles.statusText, { color: status.color! }]}>
+                                    {status.label}
+                                </Text>
+                            </View>
+                        )}
+                    </View>
+
+                    <Text style={styles.eanCode}>Item: {data.eanCode}</Text>
+                    <Text style={styles.value}>{totalValue}</Text>
+
+                    {/* Badges inferiores */}
+                    <View style={styles.badgeGroup}>
+                        <Text style={styles.badgeText}>{data.quantity} {data.unit}</Text>
+                        {(data.category || data.type) && (
+                            <>
+                                <View style={styles.badgeDivider} />
+                                <Text style={styles.badgeText}>
+                                    {[data.category, data.type].filter(Boolean).join(' • ')}
+                                </Text>
+                            </>
+                        )}
+                    </View>
+                </View>
+
+                {/* Seta solta */}
+                <ArrowRight2 size={16} color={Colors.textMuted} variant="Linear" />
             </View>
         </Pressable>
     );
@@ -70,75 +112,91 @@ export default function StockModule({ data, onPress }: StockModuleProps) {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: Colors.surface,
+        borderRadius: 24,
+        padding: 8,
+        shadowColor: "#00000055",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 4,
+    },
+    containerPressed: {
+        opacity: 0.82,
+    },
+    top: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        backgroundColor: '#fff',
-        borderRadius: 22,
-        padding: 8,
         gap: 12,
     },
-
-    // Reduz levemente a opacidade ao pressionar
-    containerPressed: {
-        opacity: 0.75,
-    },
-
-    // Placeholder para imagem ou ícone do produto
     imageContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 74,
-        aspectRatio: 1,
+        width: 76,
+        height: 76,
         borderRadius: 16,
-        backgroundColor: '#EBECEF',
-    },
-
-    // Ocupa o espaço restante entre imagem e botão
-    infoContainer: {
-        flex: 1,
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        gap: 2,
-    },
-
-    // Agrupa nome, código EAN e valor
-    infoTop: {
-        gap: 2,
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-    },
-
-    // Botão de seta à direita
-    actionContainer: {
-        flexDirection: 'column',
-        alignItems: 'center',
+        backgroundColor: Colors.background,
+        overflow: 'hidden',
         justifyContent: 'center',
+        alignItems: 'center',
+        flexShrink: 0,
     },
-
-    title: {
+    image: {
+        width: '100%',
+        height: '100%',
+    },
+    info: {
+        flex: 1,
+        gap: 2,
+    },
+    nameRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        flexWrap: 'wrap',
+    },
+    name: {
         fontSize: 14,
-        fontFamily: 'Poppins_600SemiBold',
-        color: '#292D32',
+        fontFamily: 'Satoshi_Bold',
+        color: Colors.textPrimary,
+        flexShrink: 1,
     },
-
+    statusBadge: {
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 20,
+    },
+    statusText: {
+        fontSize: 10,
+        fontFamily: 'Satoshi_Bold',
+    },
     eanCode: {
-        fontSize: 12,
-        fontFamily: 'Poppins_500Medium',
-        color: '#727272',
+        fontSize: 11,
+        fontFamily: 'Satoshi_Regular',
+        color: Colors.textSecondary,
     },
-
-    quantity: {
-        fontSize: 12,
-        fontFamily: 'Poppins_500Medium',
-        paddingTop: 6,
-        color: '#727272',
-    },
-
     value: {
         fontSize: 12,
-        fontFamily: 'Poppins_600SemiBold',
-        color: '#FF4F18',
+        fontFamily: 'Satoshi_Bold',
+        color: Colors.primary,
+        marginBottom: 2,
+    },
+    badgeGroup: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        backgroundColor: Colors.background,
+        borderRadius: 20,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        alignSelf: 'flex-start',
+    },
+    badgeText: {
+        fontSize: 11,
+        fontFamily: 'Satoshi_Medium',
+        color: Colors.textSecondary,
+    },
+    badgeDivider: {
+        width: 1,
+        height: 10,
+        backgroundColor: Colors.border,
     },
 });
