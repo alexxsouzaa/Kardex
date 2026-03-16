@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/alexxsouzaa/Kardex/compare/v1.7.0...v1.8.0) (2026-03-16)
+
+
+### Features
+
+* adicionar CategoryModal com gesto de arrastar para fechar e ícones por categoria ([8220481](https://github.com/alexxsouzaa/Kardex/commit/8220481a7c9d84f2212167ffdba232e971b4285d))
+* adicionar SortModal com gesto de arrastar para fechar e animação suave ([61e5ed2](https://github.com/alexxsouzaa/Kardex/commit/61e5ed2ea2d1636acc4504338d9fb2330b4b887b))
+* adicionar tokens de cores centralizados em colors.ts ([93fbef8](https://github.com/alexxsouzaa/Kardex/commit/93fbef8255810c5e991df5a415ab3da31bfee92b))
+
 ## [1.7.0](https://github.com/alexxsouzaa/Kardex/compare/v1.5.0...v1.7.0) (2026-03-10)
 
 
