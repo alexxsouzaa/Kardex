@@ -1,17 +1,24 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { useFonts } from "@expo-google-fonts/poppins";
+import { Colors } from "@/constants/colors";
+import { ArrowDown2 } from "iconsax-react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 
 type FilterOption<T extends string> = {
-    label: string; // Texto exibido na aba
-    value: T;      // Valor único que identifica a aba
+    label: string;
+    value: T;
 };
 
 type FilterTabsProps<T extends string> = {
-    options: FilterOption<T>[]; // Lista de abas disponíveis
-    value: T;                   // Aba atualmente ativa
-    onChange: (value: T) => void; // Callback ao trocar de aba
+    options: FilterOption<T>[];
+    value: T;
+    onChange: (value: T) => void;
+    sortLabel?: string;
+    categoryLabel?: string;
+    onSortPress?: () => void;
+    onCategoryPress?: () => void;
+    isSortActive?: boolean;
+    isCategoryActive?: boolean;
 };
 
 // ─── Componente ──────────────────────────────────────────────────────────────
@@ -20,25 +27,96 @@ export default function FilterTabs<T extends string>({
     options,
     value,
     onChange,
+    sortLabel = 'Ordenar',
+    categoryLabel = 'Categoria',
+    onSortPress,
+    onCategoryPress,
+    isSortActive = false,
+    isCategoryActive = false,
 }: FilterTabsProps<T>) {
     return (
-        // ScrollView horizontal para suportar muitas abas sem quebrar layout
         <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.container}
         >
+            {/* ── Pill: Ordenar ── */}
+            {onSortPress && (
+                <TouchableOpacity
+                    style={[
+                        styles.pill,
+                        styles.pillDropdown,
+                        isSortActive && styles.pillDropdownActive,
+                        { borderColor: isSortActive ? Colors.primary : Colors.border },
+                    ]}
+                    onPress={onSortPress}
+                    activeOpacity={0.7}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Ordenar: ${sortLabel}`}
+                >
+                    <Text style={[
+                        styles.pillDropdownText,
+                        isSortActive && styles.pillDropdownTextActive,
+                    ]}>
+                        {sortLabel}
+                    </Text>
+                    <ArrowDown2
+                        size={12}
+                        color={isSortActive ? Colors.primary : Colors.textSecondary}
+                        variant="Bold"
+                    />
+                </TouchableOpacity>
+            )}
+
+            {/* ── Pill: Categoria ── */}
+            {onCategoryPress && (
+                <TouchableOpacity
+                    style={[
+                        styles.pill,
+                        styles.pillDropdown,
+                        isCategoryActive && styles.pillDropdownActive,
+                        { borderColor: isCategoryActive ? Colors.primary : Colors.border },
+                    ]}
+                    onPress={onCategoryPress}
+                    activeOpacity={0.7}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Categoria: ${categoryLabel}`}
+                >
+                    <Text style={[
+                        styles.pillDropdownText,
+                        isCategoryActive && styles.pillDropdownTextActive,
+                    ]}>
+                        {categoryLabel}
+                    </Text>
+                    <ArrowDown2
+                        size={12}
+                        color={isCategoryActive ? Colors.primary : Colors.textSecondary}
+                        variant="Bold"
+                    />
+                </TouchableOpacity>
+            )}
+
+            {/* ── Pills de filtro ── */}
             {options.map((option) => {
                 const isActive = option.value === value;
-
                 return (
                     <TouchableOpacity
                         key={option.value}
-                        style={[styles.tab, isActive && styles.tabActive]}
+                        style={[
+                            styles.pill,
+                            isActive && styles.pillActive,
+                            { borderColor: isActive ? Colors.textPrimary : Colors.border },
+                        ]}
                         onPress={() => onChange(option.value)}
                         activeOpacity={0.7}
+                        accessibilityRole="tab"
+                        accessibilityState={{ selected: isActive }}
+                        accessibilityLabel={option.label}
                     >
-                        <Text style={[styles.label, isActive && styles.labelActive]}>
+                        <Text style={[
+                            styles.pillText,
+                            isActive && styles.pillTextActive,
+                        ]}>
                             {option.label}
                         </Text>
                     </TouchableOpacity>
@@ -52,36 +130,55 @@ export default function FilterTabs<T extends string>({
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         gap: 8,
-        backgroundColor: "#fff",
-        borderRadius: 20,
-        padding: 2,
-        justifyContent: "space-between"
+        paddingVertical: 2,
     },
-    tab: {
-        paddingHorizontal: 16,
+
+    // Base de todos os pills
+    pill: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        paddingHorizontal: 14,
         paddingVertical: 8,
-        borderRadius: 16,
-        alignItems: "center",
-        flex: 1
+        borderRadius: 20,
+        borderWidth: 1.5,
+        backgroundColor: Colors.surface,
+        borderColor: Colors.border,
     },
-    tabActive: {
-        backgroundColor: "#F1F1F4",
-        shadowColor: "#000",
-        shadowOpacity: 0.08,
-        shadowRadius: 4,
-        flex: 1
+
+    // Dropdown (Ordenar / Categoria) — inativo
+    pillDropdown: {
+        backgroundColor: Colors.surface,
     },
-    label: {
-        fontSize: 12,
-        fontFamily: "Poppins_500Medium",
-        color: "#727272",
+
+    // Dropdown ativo — fundo levemente laranja
+    pillDropdownActive: {
+        backgroundColor: Colors.primaryLight,
     },
-    labelActive: {
-        fontFamily: "Poppins_600SemiBold",
-        color: "#292D32",
+    pillDropdownText: {
+        fontSize: 13,
+        fontFamily: 'Satoshi_Medium',
+        color: Colors.textSecondary,
+    },
+    pillDropdownTextActive: {
+        fontFamily: 'Satoshi_Bold',
+        color: Colors.primary,
+    },
+
+    // Filtro ativo — fundo escuro
+    pillActive: {
+        backgroundColor: Colors.textPrimary,
+    },
+    pillText: {
+        fontSize: 13,
+        fontFamily: 'Satoshi_Medium',
+        color: Colors.textSecondary,
+    },
+    pillTextActive: {
+        fontFamily: 'Satoshi_Bold',
+        color: Colors.surface,
     },
 });
