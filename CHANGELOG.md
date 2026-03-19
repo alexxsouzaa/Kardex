@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/alexxsouzaa/Kardex/compare/v1.8.0...v1.9.0) (2026-03-19)
+
+
+### Features
+
+* adicionar AuthContext com Supabase, roles e planos ([dd142b0](https://github.com/alexxsouzaa/Kardex/commit/dd142b0159a11c32b6b248249c967d537090ce46))
+* adicionar constantes de limites por plano (free/pro) ([32097fb](https://github.com/alexxsouzaa/Kardex/commit/32097fbd1a6422ab2e31c2d1ebc2d9eb5039b652))
+* adicionar guard de autenticação no index ([5ffc1e6](https://github.com/alexxsouzaa/Kardex/commit/5ffc1e69429480cf4d35871b7dcef14a3c88b261))
+* adicionar hook useMovements para registrar movimentações ([a2920dd](https://github.com/alexxsouzaa/Kardex/commit/a2920dd59202d234474c8f84af116fb18e685ccf))
+* adicionar hook usePlan para verificar limites do plano ([31a9eb0](https://github.com/alexxsouzaa/Kardex/commit/31a9eb0f9804082a51f0d8e953a6e5c41132e677))
+* adicionar hook useProduct para produto individual ([e15d832](https://github.com/alexxsouzaa/Kardex/commit/e15d8320530844160d7dee16ca4dd31d7e91aa18))
+* adicionar hook useProduct para produto individual ([1a8abd9](https://github.com/alexxsouzaa/Kardex/commit/1a8abd94ba00339464fec4f3441270faf64e1509))
+* adicionar hook useProductMutations com criar, editar e deletar ([3ef1159](https://github.com/alexxsouzaa/Kardex/commit/3ef1159493af8da0b4a0baa257380a45eb7371c4))
+* adicionar hook useProducts com filtros, busca e ordenação ([0bd2693](https://github.com/alexxsouzaa/Kardex/commit/0bd2693486027a0dfff4082e0bfd16d690b605d1))
+* adicionar tela de opções com perfil, configurações e logout ([b022b45](https://github.com/alexxsouzaa/Kardex/commit/b022b4597e5fb9dbdd11526d66ebdde98e0ffaa7))
+* adicionar telas de login, cadastro e onboarding ([819be5f](https://github.com/alexxsouzaa/Kardex/commit/819be5f405742f24c6519357eea338cc31dc6aeb))
+* configurar WatermelonDB com schema, models e migrations ([f9ebbb0](https://github.com/alexxsouzaa/Kardex/commit/f9ebbb00aae0e75bdb59a9b101d3a67b9b0d86ab))
+
 ## [1.8.0](https://github.com/alexxsouzaa/Kardex/compare/v1.7.0...v1.8.0) (2026-03-16)
 
 
