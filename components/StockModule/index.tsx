@@ -1,26 +1,32 @@
 import { Colors } from "@/constants/colors";
-import { LOW_STOCK_THRESHOLD } from "@/constants/stockData";
 import { ArrowRight2, ShoppingCart } from "iconsax-react-native";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
+// ─── Constante local ─────────────────────────────────────────────────────────
+
+const LOW_STOCK_THRESHOLD = 5;
+
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 
-type StockItem = {
-    id: string;
-    name: string;
-    eanCode: string;
-    quantity: number;
-    value: number;
-    unit: string;
-    category?: string;
-    type?: string;
-    icon?: any;
-    images?: string[];
+// Aceita tanto o modelo WatermelonDB quanto o tipo antigo
+export type StockItemData = {
+    id:        string;
+    name:      string;
+    eanCode?:  string | null;
+    quantity:  number;
+    value:     number;
+    unit?:     string | null;
+    category?: string | null;
+    type?:     string | null;
+    icon?:     any;
+    images?:   string[] | null;
+    // WatermelonDB getter
+    _images?:  string | null;
 };
 
 type StockModuleProps = {
-    data: StockItem;
-    onPress?: () => void;
+    data:      StockItemData;
+    onPress?:  () => void;
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -31,15 +37,26 @@ function getStockStatus(quantity: number) {
     return                                      { color: null,           bg: null,                label: null            };
 }
 
+function getImages(data: StockItemData): string[] {
+    // WatermelonDB — images é um getter que retorna string[]
+    if (Array.isArray(data.images)) return data.images;
+    // Fallback JSON string
+    if (typeof data._images === 'string') {
+        try { return JSON.parse(data._images); } catch { return []; }
+    }
+    return [];
+}
+
 // ─── Componente ──────────────────────────────────────────────────────────────
 
 export default function StockModule({ data, onPress }: StockModuleProps) {
-    const Icon = data.icon ?? ShoppingCart;
-    const firstImage = data.images?.[0];
-    const status = getStockStatus(data.quantity);
+    const Icon       = data.icon ?? ShoppingCart;
+    const images     = getImages(data);
+    const firstImage = images[0];
+    const status     = getStockStatus(data.quantity);
 
     const totalValue = (data.value * data.quantity).toLocaleString('pt-BR', {
-        style: 'currency',
+        style:    'currency',
         currency: 'BRL',
     });
 
@@ -84,12 +101,12 @@ export default function StockModule({ data, onPress }: StockModuleProps) {
                         )}
                     </View>
 
-                    <Text style={styles.eanCode}>Item: {data.eanCode}</Text>
+                    <Text style={styles.eanCode}>Item: {data.eanCode ?? '—'}</Text>
                     <Text style={styles.value}>{totalValue}</Text>
 
                     {/* Badges inferiores */}
                     <View style={styles.badgeGroup}>
-                        <Text style={styles.badgeText}>{data.quantity} {data.unit}</Text>
+                        <Text style={styles.badgeText}>{data.quantity} {data.unit ?? ''}</Text>
                         {(data.category || data.type) && (
                             <>
                                 <View style={styles.badgeDivider} />
@@ -101,7 +118,7 @@ export default function StockModule({ data, onPress }: StockModuleProps) {
                     </View>
                 </View>
 
-                {/* Seta solta */}
+                {/* Seta */}
                 <ArrowRight2 size={16} color={Colors.textMuted} variant="Linear" />
             </View>
         </Pressable>
@@ -115,11 +132,11 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.surface,
         borderRadius: 24,
         padding: 8,
-        shadowColor: "#00000055",
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 4,
+        shadowOpacity: 0.04,
+        shadowRadius: 8,
+        elevation: 1,
     },
     containerPressed: {
         opacity: 0.82,
