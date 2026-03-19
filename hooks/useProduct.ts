@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { database } from '@/database';
-import Product from '@/database/models/Product';
+import { database }  from '@/database';
+import Product                 from '@/database/models/Product';
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
@@ -9,12 +9,14 @@ export function useProduct(productId: string) {
     const [isLoading, setIsLoading] = useState(true);
     const [error,     setError]     = useState<string | null>(null);
 
+    const collection = database.get('products');
+
     useEffect(() => {
         if (!productId) return;
 
         setIsLoading(true);
 
-        const subscription = database.get<Product>('products')
+        const subscription = collection
             .findAndObserve(productId)
             .subscribe({
                 next: (p) => {
