@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/colors";
-import { ArrowRight2, ShoppingCart } from "iconsax-react-native";
+import { ArrowRight2, ShoppingCart, Barcode } from "iconsax-react-native";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 // ─── Constante local ─────────────────────────────────────────────────────────
@@ -8,7 +8,6 @@ const LOW_STOCK_THRESHOLD = 5;
 
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 
-// Aceita tanto o modelo WatermelonDB quanto o tipo antigo
 export type StockItemData = {
     id:        string;
     name:      string;
@@ -20,13 +19,12 @@ export type StockItemData = {
     type?:     string | null;
     icon?:     any;
     images?:   string[] | null;
-    // WatermelonDB getter
-    _images?:  string | null;
+    imagesRaw?: string | null;
 };
 
 type StockModuleProps = {
-    data:      StockItemData;
-    onPress?:  () => void;
+    data:     StockItemData;
+    onPress?: () => void;
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -38,11 +36,9 @@ function getStockStatus(quantity: number) {
 }
 
 function getImages(data: StockItemData): string[] {
-    // WatermelonDB — images é um getter que retorna string[]
     if (Array.isArray(data.images)) return data.images;
-    // Fallback JSON string
-    if (typeof data._images === 'string') {
-        try { return JSON.parse(data._images); } catch { return []; }
+    if (typeof data.imagesRaw === 'string') {
+        try { return JSON.parse(data.imagesRaw); } catch { return []; }
     }
     return [];
 }
@@ -60,6 +56,8 @@ export default function StockModule({ data, onPress }: StockModuleProps) {
         currency: 'BRL',
     });
 
+    const categoryLabel = [data.category, data.type].filter(Boolean).join(' • ');
+
     return (
         <Pressable
             style={({ pressed }) => [
@@ -69,11 +67,10 @@ export default function StockModule({ data, onPress }: StockModuleProps) {
             onPress={onPress}
             accessibilityRole="button"
             accessibilityLabel={`${data.name}, ${totalValue}, ${data.quantity} ${data.unit}`}
-            accessibilityHint="Toque para ver detalhes do produto"
         >
-            <View style={styles.top}>
+            <View style={styles.inner}>
 
-                {/* Imagem */}
+                {/* ── Imagem ── */}
                 <View style={styles.imageContainer}>
                     {firstImage ? (
                         <Image
@@ -86,12 +83,25 @@ export default function StockModule({ data, onPress }: StockModuleProps) {
                     )}
                 </View>
 
-                {/* Info */}
+                {/* ── Info ── */}
                 <View style={styles.info}>
 
-                    {/* Nome + badge de status inline */}
-                    <View style={styles.nameRow}>
-                        <Text style={styles.name} numberOfLines={1}>{data.name}</Text>
+                    {/* Badge categoria+tipo no topo */}
+                    {categoryLabel ? (
+                        <View style={styles.categoryBadge}>
+                            <Text style={styles.categoryText}>{categoryLabel}</Text>
+                        </View>
+                    ) : null}
+
+                    {/* Nome */}
+                    <Text style={styles.name} numberOfLines={1}>{data.name}</Text>
+
+                    {/* EAN + valor + badge status */}
+                    <View style={styles.metaRow}>
+                        <Barcode size={10} color={Colors.textSecondary} variant="Bold" />
+                        <Text style={styles.meta}>
+                            {data.eanCode ?? '—'} • {totalValue}
+                        </Text>
                         {status.label && (
                             <View style={[styles.statusBadge, { backgroundColor: status.bg! }]}>
                                 <Text style={[styles.statusText, { color: status.color! }]}>
@@ -101,24 +111,13 @@ export default function StockModule({ data, onPress }: StockModuleProps) {
                         )}
                     </View>
 
-                    <Text style={styles.eanCode}>Item: {data.eanCode ?? '—'}</Text>
-                    <Text style={styles.value}>{totalValue}</Text>
-
-                    {/* Badges inferiores */}
-                    <View style={styles.badgeGroup}>
-                        <Text style={styles.badgeText}>{data.quantity} {data.unit ?? ''}</Text>
-                        {(data.category || data.type) && (
-                            <>
-                                <View style={styles.badgeDivider} />
-                                <Text style={styles.badgeText}>
-                                    {[data.category, data.type].filter(Boolean).join(' • ')}
-                                </Text>
-                            </>
-                        )}
-                    </View>
+                    {/* Disponível */}
+                    <Text style={styles.quantity}>
+                        Disponível: {data.quantity} {data.unit ?? ''}
+                    </Text>
                 </View>
 
-                {/* Seta */}
+                {/* ── Seta ── */}
                 <ArrowRight2 size={16} color={Colors.textMuted} variant="Linear" />
             </View>
         </Pressable>
@@ -130,25 +129,19 @@ export default function StockModule({ data, onPress }: StockModuleProps) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: Colors.surface,
-        borderRadius: 24,
-        padding: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.04,
-        shadowRadius: 8,
-        elevation: 1,
     },
     containerPressed: {
         opacity: 0.82,
     },
-    top: {
+    inner: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 12,
+        paddingVertical: 12,
+        gap: 16,
     },
     imageContainer: {
-        width: 76,
-        height: 76,
+        width: 72,
+        height: 72,
         borderRadius: 16,
         backgroundColor: Colors.background,
         overflow: 'hidden',
@@ -162,58 +155,48 @@ const styles = StyleSheet.create({
     },
     info: {
         flex: 1,
-        gap: 2,
+        gap: 4,
     },
-    nameRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-        flexWrap: 'wrap',
+    categoryBadge: {
+        alignSelf: 'flex-start',
+        backgroundColor: Colors.primaryLight,
+        borderRadius: 6,
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+    },
+    categoryText: {
+        fontSize: 10,
+        fontFamily: 'Satoshi_Medium',
+        color: Colors.primary,
     },
     name: {
         fontSize: 14,
         fontFamily: 'Satoshi_Bold',
         color: Colors.textPrimary,
-        flexShrink: 1,
+    },
+    metaRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        flexWrap: 'wrap',
+    },
+    meta: {
+        fontSize: 11,
+        fontFamily: 'Satoshi_Regular',
+        color: Colors.textSecondary,
     },
     statusBadge: {
-        paddingHorizontal: 8,
+        paddingHorizontal: 6,
         paddingVertical: 2,
-        borderRadius: 20,
+        borderRadius: 6,
     },
     statusText: {
         fontSize: 10,
         fontFamily: 'Satoshi_Bold',
     },
-    eanCode: {
+    quantity: {
         fontSize: 11,
         fontFamily: 'Satoshi_Regular',
         color: Colors.textSecondary,
-    },
-    value: {
-        fontSize: 12,
-        fontFamily: 'Satoshi_Bold',
-        color: Colors.primary,
-        marginBottom: 2,
-    },
-    badgeGroup: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        backgroundColor: Colors.background,
-        borderRadius: 20,
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        alignSelf: 'flex-start',
-    },
-    badgeText: {
-        fontSize: 11,
-        fontFamily: 'Satoshi_Medium',
-        color: Colors.textSecondary,
-    },
-    badgeDivider: {
-        width: 1,
-        height: 10,
-        backgroundColor: Colors.border,
     },
 });
