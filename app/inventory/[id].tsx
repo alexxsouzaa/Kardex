@@ -96,7 +96,8 @@ const Page = () => {
         );
     }
 
-    const images = product.images ?? [];
+    const images = (product.images ?? []).filter((uri) => uri?.trim());
+    const activeImageUri = images[activeImage];
 
     const formattedValue = product.value.toLocaleString('pt-BR', {
         style:    'currency',
@@ -180,11 +181,17 @@ const Page = () => {
             <Animated.View
                 style={[styles.imageWrapper, { transform: [{ scale: imageScale }] }]}
             >
-                <Image
-                    source={{ uri: images[activeImage] ?? '' }}
-                    style={styles.mainImage}
-                    resizeMode="cover"
-                />
+                {activeImageUri ? (
+                    <Image
+                        source={{ uri: activeImageUri }}
+                        style={styles.mainImage}
+                        resizeMode="cover"
+                    />
+                ) : (
+                    <View style={styles.mainImagePlaceholder}>
+                        <Box size={64} color={Colors.textMuted} variant="Bold" />
+                    </View>
+                )}
                 <LinearGradient
                     colors={['transparent', 'rgba(0,0,0,0.45)']}
                     style={styles.imageGradient}
@@ -363,6 +370,7 @@ const styles = StyleSheet.create({
     backLink:      { fontSize: 14, fontFamily: 'Satoshi_Bold', color: Colors.primary },
     imageWrapper:  { position: 'absolute', top: 0, left: 0, right: 0, height: IMAGE_HEIGHT },
     mainImage:     { width: '100%', height: '100%' },
+    mainImagePlaceholder: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.surface },
     imageGradient: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 120 },
     floatingBack:  { position: 'absolute', left: 16, zIndex: 10, borderRadius: 20, overflow: 'hidden' },
     floatingEdit:  { position: 'absolute', right: 16, zIndex: 10, borderRadius: 20, overflow: 'hidden' },

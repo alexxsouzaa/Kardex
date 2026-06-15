@@ -36,10 +36,21 @@ function getStockStatus(quantity: number) {
 }
 
 function getImages(data: StockItemData): string[] {
-    if (Array.isArray(data.images)) return data.images;
-    if (typeof data.imagesRaw === 'string') {
-        try { return JSON.parse(data.imagesRaw); } catch { return []; }
+    if (Array.isArray(data.images)) {
+        return data.images.filter((uri) => uri?.trim());
     }
+
+    if (typeof data.imagesRaw === 'string') {
+        try {
+            const parsed = JSON.parse(data.imagesRaw);
+            return Array.isArray(parsed)
+                ? parsed.filter((uri) => typeof uri === 'string' && uri.trim())
+                : [];
+        } catch {
+            return [];
+        }
+    }
+
     return [];
 }
 
