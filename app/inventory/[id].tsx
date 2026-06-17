@@ -1,10 +1,10 @@
 import IconButton from "@/components/IconButton";
 import MovementModal from "@/components/MovementModal";
-import CategoryModal from "@/components/CategoryModal";
 import EditProductModal from "@/components/EditProductModal";
+import FullscreenImageModal from "@/components/FullscreenImageModal";
 import { Colors } from "@/constants/colors";
 import { useProduct } from "@/hooks/useProduct";
-import { useProductMutations } from "@/hooks/useProductMutations";
+import { type ProductInput, useProductMutations } from "@/hooks/useProductMutations";
 import { useMovements } from "@/hooks/useMovements";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -14,7 +14,7 @@ import {
 } from "iconsax-react-native";
 import { useRef, useState } from "react";
 import {
-    ActivityIndicator, Alert, Animated, Image, ScrollView, StyleSheet,
+    ActivityIndicator, Alert, Animated, Image, Pressable, ScrollView, StyleSheet,
     Text, TouchableOpacity, View
 } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
@@ -66,9 +66,9 @@ const Page = () => {
     const [activeImage, setActiveImage] = useState(0);
 
     // ── Modais ──
-    const [movementVisible, setMovementVisible] = useState(false);
-    const [categoryVisible, setCategoryVisible] = useState(false);
-    const [editVisible,     setEditVisible]     = useState(false);
+    const [movementVisible,   setMovementVisible]   = useState(false);
+    const [editVisible,       setEditVisible]       = useState(false);
+    const [fullscreenVisible, setFullscreenVisible] = useState(false);
 
     // ── Hooks de dados ──
     const { product, isLoading, error } = useProduct(id);
@@ -147,12 +147,10 @@ const Page = () => {
         await registerMovement(product, type, qty, note);
     };
 
-    const handleCategoryConfirm = async (category: string, type: string) => {
-        await updateProduct(product, { category, type });
-    };
 
-    const handleEditConfirm = async (updated: any) => {
-        await updateProduct(product, updated);
+
+    const handleEditConfirm = async (updated: Partial<ProductInput>) => {
+        return updateProduct(product, updated);
     };
 
     const handleDelete = () => {
@@ -180,6 +178,7 @@ const Page = () => {
             {/* ── Imagem com parallax ── */}
             <Animated.View
                 style={[styles.imageWrapper, { transform: [{ scale: imageScale }] }]}
+                pointerEvents="none"
             >
                 {activeImageUri ? (
                     <Image
@@ -231,7 +230,16 @@ const Page = () => {
                 )}
                 scrollEventThrottle={16}
             >
-                <View style={{ height: IMAGE_HEIGHT - 32 }} />
+                {images.length > 0 ? (
+                    <Pressable
+                        style={styles.scrollSpacer}
+                        onPress={() => setFullscreenVisible(true)}
+                        accessibilityRole="button"
+                        accessibilityLabel="Abrir imagem em tela cheia"
+                    />
+                ) : (
+                    <View style={styles.scrollSpacer} />
+                )}
 
                 <View style={styles.card}>
 
@@ -259,7 +267,10 @@ const Page = () => {
                             {images.map((uri, index) => (
                                 <TouchableOpacity
                                     key={index}
-                                    onPress={() => setActiveImage(index)}
+                                    onPress={() => {
+                                        setActiveImage(index);
+                                        setFullscreenVisible(true);
+                                    }}
                                     activeOpacity={0.8}
                                 >
                                     <Image
@@ -287,12 +298,7 @@ const Page = () => {
                     </View>
 
                     {/* Categoria */}
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Categoria</Text>
-                        <TouchableOpacity onPress={() => setCategoryVisible(true)}>
-                            <Text style={styles.sectionAction}>Mover</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <Text style={styles.sectionTitle}>Categoria</Text>
                     <View style={styles.infoCard}>
                         <DetailRow icon={Tag} label="Categoria" value={product.category ?? '—'} />
                         <Divider />
@@ -341,19 +347,18 @@ const Page = () => {
                 onClose={() => setMovementVisible(false)}
                 onConfirm={handleMovementConfirm}
             />
-            <CategoryModal
-                visible={categoryVisible}
-                productName={product.name}
-                currentCategory={product.category ?? undefined}
-                currentType={product.type ?? undefined}
-                onClose={() => setCategoryVisible(false)}
-                onConfirm={handleCategoryConfirm}
-            />
+
             <EditProductModal
                 visible={editVisible}
                 product={product}
                 onClose={() => setEditVisible(false)}
                 onConfirm={handleEditConfirm}
+            />
+            <FullscreenImageModal
+                visible={fullscreenVisible}
+                images={images}
+                initialIndex={activeImage}
+                onClose={() => setFullscreenVisible(false)}
             />
         </View>
     );
@@ -369,6 +374,7 @@ const styles = StyleSheet.create({
     errorText:     { fontSize: 14, fontFamily: 'Satoshi_Regular', color: Colors.textSecondary },
     backLink:      { fontSize: 14, fontFamily: 'Satoshi_Bold', color: Colors.primary },
     imageWrapper:  { position: 'absolute', top: 0, left: 0, right: 0, height: IMAGE_HEIGHT },
+    scrollSpacer:  { height: IMAGE_HEIGHT - 32 },
     mainImage:     { width: '100%', height: '100%' },
     mainImagePlaceholder: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.surface },
     imageGradient: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 120 },

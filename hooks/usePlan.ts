@@ -1,30 +1,39 @@
-import { canPerformAction, getPlanLimits, PlanLimits, PlanType } from '@/constants/plans';
-import { useAuth } from '@/context/AuthContext';
+import { canPerformAction, getPlanLimits, PlanLimits } from '@/constants/plans';
+import { useApp } from '@/context/AppContext';
 import { Alert } from 'react-native';
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
-
 export function usePlan() {
-    const { plan } = useAuth();
-    const limits   = getPlanLimits(plan);
+    const app = useApp();
 
-    // Verifica se pode realizar ação e mostra alerta se não puder
+    const plan = app?.plan ?? 'free';
+
+    const limits = getPlanLimits(plan);
+
     const check = (
         action: keyof PlanLimits,
         currentCount?: number,
         onUpgrade?: () => void
     ): boolean => {
-        const { allowed, message } = canPerformAction(plan, action, currentCount);
+        const { allowed, message } = canPerformAction(
+            plan,
+            action,
+            currentCount
+        );
 
         if (!allowed) {
             Alert.alert(
                 '🔒 Limite do plano gratuito',
-                `${message}\n\nFaça upgrade para o plano Pro e desbloqueie todos os recursos.`,
+                `${message}\n\nFaça upgrade para o plano Pro.`,
                 [
                     { text: 'Agora não', style: 'cancel' },
-                    { text: 'Ver plano Pro', onPress: onUpgrade, style: 'default' },
+                    {
+                        text: 'Ver plano Pro',
+                        onPress: onUpgrade,
+                        style: 'default',
+                    },
                 ]
             );
+
             return false;
         }
 
@@ -34,7 +43,7 @@ export function usePlan() {
     return {
         plan,
         limits,
-        isPro:  plan === 'pro',
+        isPro: plan === 'pro',
         isFree: plan === 'free',
         check,
     };

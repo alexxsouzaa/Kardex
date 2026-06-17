@@ -3,18 +3,30 @@
     "version": ">= 18.0.1",
     "appVersionSource": "remote"
   },
+
   "build": {
-    "preview": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
       "android": {
         "buildType": "apk"
       }
     },
+
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+
     "production": {
       "android": {
         "buildType": "app-bundle"
       }
     }
   },
+
   "submit": {
     "production": {}
   }

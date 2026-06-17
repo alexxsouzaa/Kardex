@@ -252,12 +252,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     headerTitle: {
-        fontSize: 17,
-        fontFamily: 'Satoshi_Bold',
+        fontSize: 18,
+        fontFamily: 'Satoshi_Medium',
         color: Colors.textPrimary,
     },
     content: {
         padding: 16,
+        paddingBottom: 120,
     },
     divider: {
         height: 1,
@@ -270,7 +271,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         padding: 16,
-        paddingBottom: 32,
+        paddingBottom: 120,
         backgroundColor: Colors.background,
         borderTopWidth: 1,
         borderTopColor: Colors.border,

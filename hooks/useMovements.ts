@@ -2,13 +2,13 @@ import { database }   from '@/database';
 import { Q }          from '@nozbe/watermelondb';
 import Movement        from '@/database/models/Movement';
 import Product         from '@/database/models/Product';
-import { useAuth }     from '@/context/AuthContext';
+import { useApp }     from '@/context/AppContext';
 import { useEffect, useState } from 'react';
 
 export type MovementType = 'in' | 'out' | 'adjust';
 
 export function useMovements(productId?: string) {
-    const { user, company }           = useAuth();
+    const { user, company }           = useApp();
     const [movements,  setMovements]  = useState<Movement[]>([]);
     const [isLoading,  setIsLoading]  = useState(false);
     const [isSaving,   setIsSaving]   = useState(false);

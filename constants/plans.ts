@@ -18,7 +18,7 @@ export const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
     free: {
         maxProducts:     50,
         maxUsers:         2,
-        maxPhotos:        1,
+        maxPhotos:        5,
         maxDeposits:      1,
         hasReports:       false,
         hasCloudSync:     false,
@@ -40,7 +40,7 @@ export const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
 export const UPGRADE_MESSAGES: Record<string, string> = {
     maxProducts:    'Você atingiu o limite de 50 produtos no plano gratuito.',
     maxUsers:       'Você atingiu o limite de 2 usuários no plano gratuito.',
-    maxPhotos:      'O plano gratuito permite apenas 1 foto por produto.',
+    maxPhotos:      'Você atingiu o limite de 5 fotos por produto.',
     hasReports:     'Relatórios estão disponíveis apenas no plano Pro.',
     hasCloudSync:   'Sincronização na nuvem está disponível apenas no plano Pro.',
     hasMultiDeposit:'Múltiplos depósitos estão disponíveis apenas no plano Pro.',

@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/colors";
+import { persistImage } from "@/utils/persistImage";
 import * as ImagePicker from "expo-image-picker";
 import { Add, CloseCircle } from "iconsax-react-native";
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -9,6 +10,7 @@ type ProductImagesSectionProps = {
     images:        string[];
     onAddImage:    (uri: string) => void;
     onRemoveImage: (index: number) => void;
+    onReplaceImage?: (index: number, uri: string) => void;
 };
 
 const MAX_IMAGES = 5;
@@ -19,11 +21,15 @@ export default function ProductImagesSection({
     images,
     onAddImage,
     onRemoveImage,
+    onReplaceImage,
 }: ProductImagesSectionProps) {
+    const visibleImages = images
+        .map((uri, index) => ({ uri, index }))
+        .filter((image) => image.uri?.trim());
 
-    const pickImage = async () => {
+    const pickImageFromLibrary = async (): Promise<string | null> => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') return;
+        if (status !== 'granted') return null;
 
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
@@ -33,7 +39,27 @@ export default function ProductImagesSection({
         });
 
         if (!result.canceled && result.assets[0]) {
-            onAddImage(result.assets[0].uri);
+            return result.assets[0].uri;
+        }
+
+        return null;
+    };
+
+    const pickImage = async () => {
+        const uri = await pickImageFromLibrary();
+        if (uri) {
+            const persisted = await persistImage(uri);
+            onAddImage(persisted);
+        }
+    };
+
+    const replaceImage = async (index: number) => {
+        if (!onReplaceImage) return;
+
+        const uri = await pickImageFromLibrary();
+        if (uri) {
+            const persisted = await persistImage(uri);
+            onReplaceImage(index, persisted);
         }
     };
 
@@ -48,7 +74,8 @@ export default function ProductImagesSection({
         });
 
         if (!result.canceled && result.assets[0]) {
-            onAddImage(result.assets[0].uri);
+            const persisted = await persistImage(result.assets[0].uri);
+            onAddImage(persisted);
         }
     };
 
@@ -56,7 +83,7 @@ export default function ProductImagesSection({
         <View style={styles.section}>
             <View style={styles.titleRow}>
                 <Text style={styles.sectionTitle}>Imagens</Text>
-                <Text style={styles.counter}>{images.length}/{MAX_IMAGES}</Text>
+                <Text style={styles.counter}>{visibleImages.length}/{MAX_IMAGES}</Text>
             </View>
 
             <ScrollView
@@ -65,9 +92,18 @@ export default function ProductImagesSection({
                 contentContainerStyle={styles.imageList}
             >
                 {/* Imagens adicionadas */}
-                {images.map((uri, index) => (
+                {visibleImages.map(({ uri, index }) => (
                     <View key={index} style={styles.imageWrapper}>
                         <Image source={{ uri }} style={styles.image} resizeMode="cover" />
+                        {onReplaceImage && (
+                            <TouchableOpacity
+                                style={styles.replaceBtn}
+                                onPress={() => replaceImage(index)}
+                                activeOpacity={0.8}
+                            >
+                                <Text style={styles.replaceText}>Trocar</Text>
+                            </TouchableOpacity>
+                        )}
                         <TouchableOpacity
                             style={styles.removeBtn}
                             onPress={() => onRemoveImage(index)}
@@ -78,7 +114,7 @@ export default function ProductImagesSection({
                 ))}
 
                 {/* Botões de adicionar */}
-                {images.length < MAX_IMAGES && (
+                {visibleImages.length < MAX_IMAGES && (
                     <>
                         <TouchableOpacity style={styles.addBtn} onPress={pickImage} activeOpacity={0.8}>
                             <Add size={24} color={Colors.textMuted} variant="Linear" />
@@ -136,6 +172,21 @@ const styles = StyleSheet.create({
         right: -6,
         backgroundColor: Colors.surface,
         borderRadius: 10,
+    },
+    replaceBtn: {
+        position: 'absolute',
+        left: 6,
+        right: 6,
+        bottom: 6,
+        borderRadius: 10,
+        backgroundColor: 'rgba(0,0,0,0.62)',
+        paddingVertical: 4,
+        alignItems: 'center',
+    },
+    replaceText: {
+        fontSize: 10,
+        fontFamily: 'Satoshi_Bold',
+        color: '#fff',
     },
     addBtn: {
         width: 80,

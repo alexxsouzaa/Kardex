@@ -1,11 +1,10 @@
-// app/index.tsx
-import { useAuth } from '@/context/AuthContext';
+import { useApp } from '@/context/AppContext';
 import { Redirect } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
 import { Colors } from '@/constants/colors';
 
 export default function Index() {
-    const { isAuthenticated, isLoading, company } = useAuth();
+    const { deposit, isLoading } = useApp();
 
     if (isLoading) {
         return (
@@ -15,7 +14,9 @@ export default function Index() {
         );
     }
 
-    if (!isAuthenticated)        return <Redirect href="/(auth)/login" />;
-    if (!company)                return <Redirect href="/(auth)/onboarding" />;
-    return                              <Redirect href="/(tabs)" />;
+    // Sem depósito → onboarding
+    if (!deposit) return <Redirect href="/onboarding" />;
+
+    // Com depósito → app
+    return <Redirect href="/(tabs)" />;
 }

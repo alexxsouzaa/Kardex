@@ -7,6 +7,8 @@
     "icon": "./assets/images/icon.png",
     "scheme": "kardex",
     "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
+    "plugins": ["expo-router"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "y",
@@ -43,7 +45,8 @@
           }
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true,

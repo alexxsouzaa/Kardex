@@ -28,6 +28,3 @@ export const database = new Database({
         Movement,
     ],
 });
-
-// ─── Exports de conveniência ──────────────────────────────────────────────────
-

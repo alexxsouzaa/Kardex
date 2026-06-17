@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/colors";
-import { useAuth } from "@/context/AuthContext";
+import { useApp } from "@/context/AppContext";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import Constants from 'expo-constants';
@@ -78,7 +78,7 @@ const SettingGroupCard = ({ group }: { group: SettingGroup }) => (
 
 export default function OptionsPage() {
     const router       = useRouter();
-    const { signOut, user, role, plan } = useAuth();
+    const { signOut, user, role, plan } = useApp();
 
     const roleLabel: Record<string, string> = {
         admin:    'Administrador',

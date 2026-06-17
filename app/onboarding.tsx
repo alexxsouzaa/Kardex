@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/colors";
-import { useAuth } from "@/context/AuthContext";
+import { useApp } from "@/context/AppContext";
 import { useRouter } from "expo-router";
 import { Building, Shop } from "iconsax-react-native";
 import { useState } from "react";
@@ -9,11 +9,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// ─── Componente ──────────────────────────────────────────────────────────────
-
 export default function OnboardingPage() {
     const router = useRouter();
-    const { createCompany, user, signOut } = useAuth();
+    const { createDeposit } = useApp();
 
     const [depositName, setDepositName] = useState('');
     const [isLoading,   setIsLoading]   = useState(false);
@@ -25,45 +23,13 @@ export default function OnboardingPage() {
         }
 
         setIsLoading(true);
-        const { error } = await createCompany(depositName.trim());
+        await createDeposit(depositName.trim());
         setIsLoading(false);
-
-        if (error) {
-            Alert.alert('Erro', error);
-            return;
-        }
-
-        router.replace('/');
-    };
-
-    const handleSignOut = () => {
-        Alert.alert(
-            'Sair da conta',
-            'Tem certeza que deseja sair?',
-            [
-                { text: 'Cancelar', style: 'cancel' },
-                {
-                    text: 'Sair',
-                    style: 'destructive',
-                    onPress: async () => {
-                        await signOut();
-                        router.replace('/');
-                    },
-                },
-            ]
-        );
+        router.replace('/(tabs)' as any);
     };
 
     return (
         <SafeAreaView style={styles.container}>
-
-            {/* ── Top bar com botão sair ── */}
-            <View style={styles.topBar}>
-                <TouchableOpacity onPress={handleSignOut} hitSlop={8}>
-                    <Text style={styles.signOutText}>Sair</Text>
-                </TouchableOpacity>
-            </View>
-
             <KeyboardAvoidingView
                 style={styles.inner}
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -77,9 +43,6 @@ export default function OnboardingPage() {
 
                 {/* Texto */}
                 <View style={styles.textArea}>
-                    <Text style={styles.greeting}>
-                        Olá, {user?.fullName?.split(' ')[0] ?? 'bem-vindo'}! 👋
-                    </Text>
                     <Text style={styles.title}>Crie seu estoque</Text>
                     <Text style={styles.subtitle}>
                         Dê um nome ao seu depósito ou empresa. Você pode alterar isso depois nas configurações.
@@ -130,12 +93,12 @@ export default function OnboardingPage() {
                     </TouchableOpacity>
                 </View>
 
-                {/* Plano */}
+                {/* Info plano */}
                 <View style={styles.planInfo}>
                     <Text style={styles.planText}>
                         🎉 Você está no plano{' '}
                         <Text style={styles.planBold}>Gratuito</Text>
-                        {' '}· 50 produtos · 2 usuários
+                        {' '}· 50 produtos · Armazenamento local
                     </Text>
                 </View>
             </KeyboardAvoidingView>
@@ -143,22 +106,10 @@ export default function OnboardingPage() {
     );
 }
 
-// ─── Estilos ─────────────────────────────────────────────────────────────────
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.background,
-    },
-    topBar: {
-        alignItems: 'flex-end',
-        paddingHorizontal: 24,
-        paddingTop: 8,
-    },
-    signOutText: {
-        fontSize: 14,
-        fontFamily: 'Satoshi_Medium',
-        color: Colors.textSecondary,
     },
     inner: {
         flex: 1,
@@ -179,11 +130,6 @@ const styles = StyleSheet.create({
     },
     textArea: {
         gap: 8,
-    },
-    greeting: {
-        fontSize: 16,
-        fontFamily: 'Satoshi_Regular',
-        color: Colors.textSecondary,
     },
     title: {
         fontSize: 28,

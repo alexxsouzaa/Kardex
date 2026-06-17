@@ -29,6 +29,7 @@ const TabLayout = () => {
         name="cadastre"
         options={{
           title: 'Cadastrar',
+          tabBarStyle: { display: 'none' },
         }}
       />
       <Tabs.Screen
