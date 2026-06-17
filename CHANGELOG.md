@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/alexxsouzaa/Kardex/compare/v1.9.0...v1.10.0) (2026-06-17)
+
+
+### Features
+
+* configurar layout de navegação para fluxo de autenticação ([ce76d58](https://github.com/alexxsouzaa/Kardex/commit/ce76d58a4553b101088b2094e69b7f950c906119))
+* implementar contexto global para gerenciamento de depósitos ([b1da2fb](https://github.com/alexxsouzaa/Kardex/commit/b1da2fbb6b4ca310eccfad85c4150983a248474b))
+* implementar hook de autenticação (useAuth) ([c4edb61](https://github.com/alexxsouzaa/Kardex/commit/c4edb6133c062834ff34b113a8f51afcd8c1bd73))
+* implementar hook de gerenciamento de depósitos ([7eeb0b4](https://github.com/alexxsouzaa/Kardex/commit/7eeb0b4580b2a87c23ba143377b33ffbd6d9acfa))
+* implementar onboarding com criação de depósito inicial ([71ca015](https://github.com/alexxsouzaa/Kardex/commit/71ca015dac4b3c57f0b64662839d5d0948c13ff8))
+* implementar registro de usuário com integração ao sistema de autenticação ([edf010f](https://github.com/alexxsouzaa/Kardex/commit/edf010ff68445c9bd2e384fdbc95a978f89ab9a5))
+* implementar tela de relatórios ([b70a8f9](https://github.com/alexxsouzaa/Kardex/commit/b70a8f99c241b379858be1305a28da3245fd7c05))
+
+
+### Bug Fixes
+
+* corrige avisos de imagens no Expo ([565c7b2](https://github.com/alexxsouzaa/Kardex/commit/565c7b28984104410b3e37e26958a94dc52191a6))
+* persistencia de imagens e carrossel em tela cheia - Criado utils/persistImage.ts para copiar imagens do cache para diretorio permanente - Integrado persistencia no useProductMutations (create e update) - Integrado persistencia no ProductImagesSection (galeria, camera e troca) - Corrigido limite maxPhotos do plano free de 1 para 5 - Migrado expo-file-system para import legacy (SDK 54) ([fe291af](https://github.com/alexxsouzaa/Kardex/commit/fe291afd2c866e16c6569bb18784c402a3982ce7))
+
 ## [1.9.0](https://github.com/alexxsouzaa/Kardex/compare/v1.8.0...v1.9.0) (2026-03-19)
 
 
